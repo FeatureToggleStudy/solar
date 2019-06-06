@@ -87,6 +87,7 @@
         </feature>
 
         <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
+        <preference name="StatusBarStyle" value="default" />
     </platform>
     <plugin name="cordova-plugin-whitelist" spec="1" />
     <plugin name="cordova-plugin-dialogs" spec="~2.0.1" />
