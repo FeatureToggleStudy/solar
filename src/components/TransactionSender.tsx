@@ -5,7 +5,6 @@ import { Account } from "../context/accounts"
 import { trackError } from "../context/notifications"
 import { SettingsContext, SettingsContextType } from "../context/settings"
 import { useHorizon } from "../hooks"
-import { loadAccount } from "../lib/account"
 import { isWrongPasswordError } from "../lib/errors"
 import { explainSubmissionError } from "../lib/horizonErrors"
 import {
@@ -15,12 +14,7 @@ import {
   SignatureRequest
 } from "../lib/multisig-service"
 import { networkPassphrases, NullPublicKey } from "../lib/stellar"
-import {
-  createCopyWithDifferentSourceAccount,
-  hasSigned,
-  requiresRemoteSignatures,
-  signTransaction
-} from "../lib/transaction"
+import { hasSigned, requiresRemoteSignatures, signTransaction } from "../lib/transaction"
 import { isStellarGuardProtected, submitTransactionToStellarGuard } from "../lib/stellar-guard"
 import TransactionReviewDialog from "./TransactionReview/TransactionReviewDialog"
 import SubmissionProgress, { SubmissionType } from "./SubmissionProgress"
@@ -120,13 +114,6 @@ class TransactionSender extends React.Component<Props, State> {
     signatureRequest: SignatureRequest | null = null
   ) => {
     try {
-      if (transaction.source === NullPublicKey) {
-        // We probably received this transaction via a SEP-7 URI and need to fill-in the source
-        const accountData = await loadAccount(this.props.horizon, account.publicKey)
-        if (accountData) {
-          transaction = createCopyWithDifferentSourceAccount(transaction, accountData)
-        }
-      }
       this.setState({
         account,
         confirmationDialogOpen: true,

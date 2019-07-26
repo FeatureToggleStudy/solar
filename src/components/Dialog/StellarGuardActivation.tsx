@@ -1,5 +1,5 @@
 import React from "react"
-import { Transaction } from "stellar-sdk"
+import { Server, Transaction } from "stellar-sdk"
 import Badge from "@material-ui/core/Badge"
 import Typography from "@material-ui/core/Typography"
 import lime from "@material-ui/core/colors/lime"
@@ -7,13 +7,15 @@ import CheckIcon from "@material-ui/icons/Check"
 import CloseIcon from "@material-ui/icons/Close"
 import { useIsMobile } from "../../hooks"
 import { Box, VerticalLayout } from "../Layout/Box"
-import { DialogActionsBox, ActionButton } from "./Generic"
 import StellarGuardIcon from "../Icon/StellarGuard"
 import AccountSelectionList from "../Account/AccountSelectionList"
 import { Account, AccountsContext } from "../../context/accounts"
+import { loadAccount } from "../../lib/account"
+import { NullPublicKey } from "../../lib/stellar"
+import { createCopyWithDifferentSourceAccount } from "../../lib/transaction"
 import TransactionSender from "../TransactionSender"
-import { Server } from "stellar-sdk"
 import MainTitle from "../MainTitle"
+import { DialogActionsBox, ActionButton } from "./Generic"
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -62,10 +64,18 @@ export function StellarGuardActivationDialog(props: Props) {
   )
 
   const submit = async () => {
+    let transaction = props.transaction
     if (!selectedAccount) {
       return
     }
-    await props.sendTransaction(selectedAccount, props.transaction)
+    if (transaction.source === NullPublicKey) {
+      // We probably received this transaction via a SEP-7 URI and need to fill-in the source
+      const accountData = await loadAccount(props.horizon, selectedAccount.publicKey)
+      if (accountData) {
+        transaction = createCopyWithDifferentSourceAccount(transaction, accountData)
+      }
+    }
+    await props.sendTransaction(selectedAccount, transaction)
     await delay(2000)
     props.onClose()
   }
