@@ -45,7 +45,7 @@ export const trustedServices: TrustedService[] = [
     domain: "test.bitbondsto.com",
     networks: PermittedNetworks.testnetOnly,
     // Not the actual signing key in their stellar.toml; just a mocked one
-    signingKey: "GDENOP42IGYUZH3B6BRDWWVTLG3AWKGACBF6CBAMJ5RWEMXLKI5IX2XM",
+    signingKey: "GCE4CVO2LSGRAZUNVV5NRKS2ASZ6I73ZYUP36BX6SDTLCNWGR7ZFMUHE",
     validate(request) {
       if (request.operation !== StellarUriType.Transaction) {
         throw Error("Expected a transaction request.")

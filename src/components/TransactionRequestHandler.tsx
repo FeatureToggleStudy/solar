@@ -3,13 +3,17 @@ import { Transaction } from "stellar-sdk"
 import Fade from "@material-ui/core/Fade"
 import { TransitionProps } from "@material-ui/core/transitions/transition"
 import { StellarUriType, StellarUri, TransactionStellarUri } from "@stellarguard/stellar-uri"
+import PrefundingDialog from "./Dialog/Prefunding"
 import StellarGuardActivationDialog from "./Dialog/StellarGuardActivation"
 import { TransactionRequestContext } from "../context/transactionRequest"
 import { Dialog } from "@material-ui/core"
 
 const Transition = React.forwardRef((props: TransitionProps, ref) => <Fade ref={ref} {...props} />)
 
-function isStellarGuardTransaction(uri: StellarUri) {
+function isActivationURI(uri: StellarUri) {
+  return uri.operation === "tx" && uri.toString().match(/\bpurpose=activation\b/)
+}
+function isStellarGuardURI(uri: StellarUri) {
   return uri.originDomain === "stellarguard.me" || uri.originDomain === "test.stellarguard.me"
 }
 
@@ -29,7 +33,7 @@ function TransactionRequestHandler() {
   )
 
   if (renderedURI && renderedURI.operation === StellarUriType.Transaction) {
-    if (isStellarGuardTransaction(renderedURI)) {
+    if (isStellarGuardURI(renderedURI)) {
       const transaction = new Transaction((renderedURI as TransactionStellarUri).xdr)
       return (
         <Dialog open={Boolean(uri)} fullScreen TransitionComponent={Transition}>
@@ -38,6 +42,13 @@ function TransactionRequestHandler() {
             transaction={transaction}
             onClose={closeDialog}
           />
+        </Dialog>
+      )
+    } else if (isActivationURI(renderedURI)) {
+      const transaction = new Transaction((renderedURI as TransactionStellarUri).xdr)
+      return (
+        <Dialog open={Boolean(uri)} fullScreen TransitionComponent={Transition}>
+          <PrefundingDialog testnet={renderedURI.isTestNetwork} transaction={transaction} onClose={closeDialog} />
         </Dialog>
       )
     }

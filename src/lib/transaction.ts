@@ -238,3 +238,40 @@ export function createCopyWithDifferentSourceAccount(transaction: Transaction, a
   const xdrEnvelope = new xdr.TransactionEnvelope({ tx: xdrTransaction })
   return new Transaction(xdrEnvelope)
 }
+
+export function createCopyWithDifferentManageDataSource(transaction: Transaction, accountPubKey: string) {
+  const envelope = transaction.toEnvelope()
+
+  const sequenceNumber = new BigNumber(transaction.sequence)
+
+  // TODO: Can we skip the whole `new xdr.Transaction(attrs)` and just use `transaction.toEnvelope()` or `transaction.toEnvelope().tx()`?
+
+  const attrs = {
+    // @ts-ignore
+    sourceAccount: Keypair.fromPublicKey(account.accountId()).xdrAccountId(),
+    fee: transaction.fee,
+    // @ts-ignore
+    seqNum: xdr.SequenceNumber.fromString(sequenceNumber.toString()),
+    memo: transaction.memo.toXDRObject(),
+    // @ts-ignore
+    timeBounds: envelope.tx().timeBounds(),
+    // @ts-ignore
+    ext: new xdr.TransactionExt(0)
+  }
+
+  // @ts-ignore
+  const xdrTransaction = new xdr.Transaction(attrs)
+  // @ts-ignore
+  xdrTransaction.operations(
+    envelope
+      .tx()
+      .operations()
+      .map(operation => {
+        // FIXME
+        return operation
+      })
+  )
+  // @ts-ignore
+  const xdrEnvelope = new xdr.TransactionEnvelope({ tx: xdrTransaction })
+  return new Transaction(xdrEnvelope)
+}

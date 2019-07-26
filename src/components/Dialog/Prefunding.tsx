@@ -11,6 +11,7 @@ import { DialogActionsBox, ActionButton } from "./Generic"
 import BitbondIcon from "../Icon/Bitbond"
 import AccountSelectionList from "../Account/AccountSelectionList"
 import { Account, AccountsContext } from "../../context/accounts"
+import { createCopyWithDifferentManageDataSource } from "../../lib/transaction"
 import TransactionSender from "../TransactionSender"
 import { Server } from "stellar-sdk"
 import MainTitle from "../MainTitle"
@@ -65,7 +66,8 @@ export function PrefundingDialog(props: Props) {
     if (!selectedAccount) {
       return
     }
-    await props.sendTransaction(selectedAccount, props.transaction)
+    const transaction = createCopyWithDifferentManageDataSource(props.transaction, selectedAccount.publicKey)
+    await props.sendTransaction(selectedAccount, transaction)
     await delay(2000)
     props.onClose()
   }

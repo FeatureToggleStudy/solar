@@ -42,7 +42,7 @@ const horizon = new Server("https://horizon-testnet.stellar.org")
 storiesOf("Stellar URI Dialogs", module)
   .add("Bitbond Activation Dialog", () => {
     const uri = parseStellarUri(
-      "web+stellar:tx?xdr=AAAAADPMT6JWh08TPGnc5nd6eUtw0CfJA4kQjkHZzGEQqGWHAAAAZAAGXSAAAAABAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAM8xPolaHTxM8adzmd3p5S3DQJ8kDiRCOQdnMYRCoZYcAAAAAAAAAAACYloAAAAAAAAAAAA%3D%3D&msg=order+number+123&callback=url%3Ahttps%3A%2F%2Fexample.com%2Fstellar&origin_domain=test.stellarguard.me&signature=TwoRggPieF6UorVeLHSYZhRRKv8mMwezVUiirms%2F8N6oe8EZOCYKSsNWAn2o1rVb8jhEVte%2FEFZcRkzyXEZdBw%3D%3D"
+      "web+stellar:tx?xdr=AAAAAInBVdpcjRBmja162KpaBLPkf3nFH78G%2FpDmsTbGj%2FJWAAAAZAAAAAAAAAAAAAAAAQAAAABdOyNQAAAAAF07I1EAAAAAAAAAAQAAAAAAAAAKAAAAGHRlc3QuYml0Ym9uZHN0by5jb20gYXV0aAAAAAEAAABA5BcgWPIxtIxtE%2BCaGhI64nyTMU733BY1ek%2FB0Xc4F6A%2B1stpw6xvx807R9TXNcDKZuhL4ayWWoqLUNPKTAH1HgAAAAAAAAABxo%2FyVgAAAEDilHozjLam63beGuw1OTPiFeqAV16FyuXL%2FM2%2BrD58yU3SZoGoK0ikzyhqVYGA%2Fc%2BS2HzXl7Ql34ZMq%2BAHlQwD&origin_domain=test.bitbondsto.com&callback=https%3A%2F%2Ftest.bitbondsto.com%2Fstellar%2Fprefund&purpose=activation&network_passphrase=Test+SDF+Network+%3B+September+2015"
     )
     const transaction = new Transaction((uri as TransactionStellarUri).xdr)
 
@@ -61,7 +61,6 @@ storiesOf("Stellar URI Dialogs", module)
   })
   .add("StellarGuard Activation Dialog", () => {
     const uri = parseStellarUri(
-      // FIXME: Insert proper activation tx
       "web+stellar:tx?xdr=AAAAADPMT6JWh08TPGnc5nd6eUtw0CfJA4kQjkHZzGEQqGWHAAAAZAAGXSAAAAABAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAM8xPolaHTxM8adzmd3p5S3DQJ8kDiRCOQdnMYRCoZYcAAAAAAAAAAACYloAAAAAAAAAAAA%3D%3D&msg=order+number+123&callback=url%3Ahttps%3A%2F%2Fexample.com%2Fstellar&origin_domain=test.stellarguard.me&signature=TwoRggPieF6UorVeLHSYZhRRKv8mMwezVUiirms%2F8N6oe8EZOCYKSsNWAn2o1rVb8jhEVte%2FEFZcRkzyXEZdBw%3D%3D"
     )
     const transaction = new Transaction((uri as TransactionStellarUri).xdr)
