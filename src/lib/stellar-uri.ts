@@ -21,6 +21,7 @@ export const trustedServices: TrustedService[] = [
   {
     domain: "test.stellarguard.me",
     networks: PermittedNetworks.testnetOnly,
+    // Not the actual signing key in their stellar.toml; just a mocked one
     signingKey: "GDENOP42IGYUZH3B6BRDWWVTLG3AWKGACBF6CBAMJ5RWEMXLKI5IX2XM",
     validate(request, tx) {
       if (request.operation !== StellarUriType.Transaction) {
@@ -38,6 +39,18 @@ export const trustedServices: TrustedService[] = [
       } else {
         throw Error("Transaction must only contain setOptions operations.")
       }
+    }
+  },
+  {
+    domain: "test.bitbondsto.com",
+    networks: PermittedNetworks.testnetOnly,
+    // Not the actual signing key in their stellar.toml; just a mocked one
+    signingKey: "GDENOP42IGYUZH3B6BRDWWVTLG3AWKGACBF6CBAMJ5RWEMXLKI5IX2XM",
+    validate(request) {
+      if (request.operation !== StellarUriType.Transaction) {
+        throw Error("Expected a transaction request.")
+      }
+      // FIXME
     }
   }
 ]
