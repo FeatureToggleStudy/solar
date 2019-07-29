@@ -1,9 +1,19 @@
 import React from "react"
 import Async from "react-promise"
-import { Asset, Memo, Network, Operation, Server, TransactionBuilder } from "stellar-sdk"
+import { Asset, Memo, Network, Operation, Server, Transaction, TransactionBuilder } from "stellar-sdk"
 import { storiesOf } from "@storybook/react"
 import TransactionSummary from "../src/components/TransactionReview/TransactionSummary"
-import { useWebAuth } from "../src/hooks"
+import { Account } from "../src/context/accounts"
+import { useWebAuth, useSigningKeyDomainCache } from "../src/hooks"
+
+const testAccount = {
+  id: "testid1",
+  name: "My Testnet Account #1",
+  publicKey: "GBPBFWVBADSESGADWEGC7SGTHE3535FWK4BS6UW3WMHX26PHGIH5NF4W",
+  requiresPassword: false,
+  testnet: true,
+  getPrivateKey: (password: string) => Promise.resolve(password)
+}
 
 interface SampleWebAuthProps {
   accountID: string
@@ -33,6 +43,20 @@ function SampleWebAuth(props: SampleWebAuthProps) {
   )
 
   return <>{props.children(promise)}</>
+}
+
+interface StellarUriWebAuthProps {
+  account: Account | null
+  domain: string
+  transaction: Transaction
+}
+
+function StellarUriWebAuth(props: StellarUriWebAuthProps) {
+  const signingKeyCache = useSigningKeyDomainCache()
+  if (!signingKeyCache.has(props.transaction.source)) {
+    signingKeyCache.set(props.transaction.source, props.domain)
+  }
+  return <TransactionSummary account={props.account} testnet transaction={props.transaction} />
 }
 
 storiesOf("TransactionSummary", module)
@@ -136,6 +160,12 @@ storiesOf("TransactionSummary", module)
         )}
       </SampleWebAuth>
     )
+  })
+  .add("Bitbond Stellar URI web auth", () => {
+    const transaction = new Transaction(
+      "AAAAAInBVdpcjRBmja162KpaBLPkf3nFH78G/pDmsTbGj/JWAAAAZAAAAAAAAAAAAAAAAQAAAABdPvnqAAAAAF0++esAAAAAAAAAAQAAAAEAAAAAXhLaoQDkSRgDsQwvyNM5N930tlcDL1Lbsw99eecyD9YAAAAKAAAAGHRlc3QuYml0Ym9uZHN0by5jb20gYXV0aAAAAAEAAABA5BcgWPIxtIxtE+CaGhI64nyTMU733BY1ek/B0Xc4F6A+1stpw6xvx807R9TXNcDKZuhL4ayWWoqLUNPKTAH1HgAAAAAAAAABxo/yVgAAAEAGSqeBHbwoD9UxCbHLz0PQZEMa52sJHxPXe4xg3mONHHNQ97Yvu1aapCjvUBV9Wu7lZOVrwFczaVgClkqKE4YK"
+    )
+    return <StellarUriWebAuth account={testAccount} domain="bitbondsto.com" transaction={transaction} />
   })
   .add("Account Merge", () => {
     Network.useTestNetwork()
