@@ -263,10 +263,10 @@ export function createCopyWithDifferentManageDataSource(transaction: Transaction
   const xdrTransaction = new xdr.Transaction(attrs)
   // @ts-ignore
   xdrTransaction.operations(
-    envelope
+    (envelope as any)
       .tx()
       .operations()
-      .map(operation => {
+      .map((operation: Operation) => {
         // FIXME
         return operation
       })

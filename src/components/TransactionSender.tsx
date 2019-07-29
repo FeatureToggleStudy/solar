@@ -13,7 +13,7 @@ import {
   submitNewSignatureRequest,
   SignatureRequest
 } from "../lib/multisig-service"
-import { networkPassphrases, NullPublicKey } from "../lib/stellar"
+import { networkPassphrases } from "../lib/stellar"
 import { hasSigned, requiresRemoteSignatures, signTransaction } from "../lib/transaction"
 import { isStellarGuardProtected, submitTransactionToStellarGuard } from "../lib/stellar-guard"
 import TransactionReviewDialog from "./TransactionReview/TransactionReviewDialog"
