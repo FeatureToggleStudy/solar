@@ -7,6 +7,7 @@ import PrefundingDialog from "./Dialog/Prefunding"
 import StellarGuardActivationDialog from "./Dialog/StellarGuardActivation"
 import { TransactionRequestContext } from "../context/transactionRequest"
 import { Dialog } from "@material-ui/core"
+import { useSigningKeyDomainCache } from "../hooks"
 
 const Transition = React.forwardRef((props: TransitionProps, ref) => <Fade ref={ref} {...props} />)
 
@@ -45,7 +46,14 @@ function TransactionRequestHandler() {
         </Dialog>
       )
     } else if (isActivationURI(renderedURI)) {
+      const signingKeyCache = useSigningKeyDomainCache()
       const transaction = new Transaction((renderedURI as TransactionStellarUri).xdr)
+
+      if (!signingKeyCache.has(transaction.source)) {
+        // Cache the signing key and the domain, so the TransactionSummary can pretty-print it later
+        signingKeyCache.set(transaction.source, renderedURI.originDomain!)
+      }
+
       return (
         <Dialog open={Boolean(uri)} fullScreen TransitionComponent={Transition}>
           <PrefundingDialog testnet={renderedURI.isTestNetwork} transaction={transaction} onClose={closeDialog} />
