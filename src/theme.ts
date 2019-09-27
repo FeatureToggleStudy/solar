@@ -110,8 +110,8 @@ const theme = createMuiTheme({
           paddingTop: "constant(safe-area-inset-top)",
           paddingBottom: "constant(safe-area-inset-bottom)"
         },
-        // iOS 12
-        paddingTop: "env(safe-area-inset-top)",
+        // Android / iOS 12
+        paddingTop: process.env.PLATFORM === "android" ? 30 : "env(safe-area-inset-top)",
         paddingBottom: "env(safe-area-inset-bottom)"
       }
     },
