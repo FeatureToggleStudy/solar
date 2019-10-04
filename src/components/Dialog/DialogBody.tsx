@@ -2,6 +2,7 @@ import React from "react"
 import { useIsMobile, RefStateObject } from "../../hooks/userinterface"
 import ErrorBoundary from "../ErrorBoundary"
 import { Box, VerticalLayout } from "../Layout/Box"
+import { Section } from "../Layout/Page"
 
 const isRefStateObject = (thing: any): thing is RefStateObject =>
   thing && "element" in thing && typeof thing.update === "function"
@@ -35,6 +36,7 @@ const topStyle: React.CSSProperties = {
 interface Props {
   actions?: React.ReactNode | RefStateObject
   actionsPosition?: "after-content" | "bottom"
+  brandColored?: boolean
   background?: React.ReactNode
   children: React.ReactNode
   excessWidth?: number
@@ -72,14 +74,16 @@ function DialogBody(props: Props) {
 
   return (
     <ErrorBoundary>
-      <VerticalLayout
+      <Section
+        brandColored={props.brandColored}
         width="100%"
         height="100%"
         maxWidth={900}
         alignItems="stretch"
         overflowX="hidden"
-        padding={isSmallScreen ? "12px 24px" : " 24px 32px"}
+        padding={isSmallScreen ? "12px 24px" : "24px 32px"}
         margin="0 auto"
+        top
       >
         {topContent}
         {background}
@@ -97,7 +101,7 @@ function DialogBody(props: Props) {
           {actionsPosition === "after-content" ? actionsContent : null}
         </VerticalLayout>
         {actionsPosition === "bottom" ? actionsContent : null}
-      </VerticalLayout>
+      </Section>
     </ErrorBoundary>
   )
 }
