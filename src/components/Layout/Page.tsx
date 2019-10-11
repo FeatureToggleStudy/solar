@@ -9,6 +9,8 @@ const platform = process.env.PLATFORM || require("os").platform()
 const isFramelessWindow = platform === "darwin"
 
 function TopOfTopSection(props: { background?: React.CSSProperties["background"] }) {
+  const isSmallScreen = useIsMobile()
+
   if (isFramelessWindow) {
     // Add invisible window-drag area and a bit of additional v-space on top
     // Need to define a static CSS class for it, since `-webkit-app-region` in CSS-in-JS might lead to trouble
@@ -22,7 +24,7 @@ function TopOfTopSection(props: { background?: React.CSSProperties["background"]
     return <div className="iphone-notch-top-spacing" />
   } else if (platform === "android") {
     // Add some additional v-space for android fullscreen view
-    return <div className="android-top-spacing" />
+    return isSmallScreen ? <div className="android-top-spacing" /> : <></>
   } else {
     return null
   }
