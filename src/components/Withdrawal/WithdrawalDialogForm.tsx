@@ -4,8 +4,9 @@ import React from "react"
 import { Asset, Memo, Operation, Server, Transaction } from "stellar-sdk"
 import Typography from "@material-ui/core/Typography"
 import {
+  withdraw,
   TransferServer,
-  WithdrawalKYCStatusResponse,
+  KYCStatusResponse,
   WithdrawalRequestKYC,
   WithdrawalRequestSuccess,
   WithdrawalSuccessResponse
@@ -55,15 +56,15 @@ function createMemo(withdrawalResponse: WithdrawalSuccessResponse): Memo | null 
 }
 
 function sendWithdrawalRequest(request: WithdrawalRequestData, authToken?: string) {
-  const { account, asset, withdrawalFormValues, method, transferServer } = request
-  return transferServer.withdraw(method, asset.getCode(), authToken, { account, ...withdrawalFormValues } as any)
+  const { account, asset, formValues, method, transferServer } = request
+  return withdraw(transferServer, method, asset.getCode(), authToken, { account, ...formValues } as any)
 }
 
 interface WithdrawalRequestData {
   account: string
   asset: Asset
   method: string
-  withdrawalFormValues: { [fieldName: string]: string }
+  formValues: { [fieldName: string]: string }
   transferServer: TransferServer
 }
 
@@ -77,7 +78,7 @@ interface Props {
   testnet: boolean
 }
 
-function Offramp(props: Props) {
+function WithdrawalDialogForm(props: Props) {
   const [currentState, dispatch] = React.useReducer(stateMachine, initialState)
   const [withdrawalRequestPending, setWithdrawalRequestPending] = React.useState(false)
   const [withdrawalResponsePending, setWithdrawalResponsePending] = React.useState(false)
@@ -122,9 +123,9 @@ function Offramp(props: Props) {
       } else if (response.data.type === "non_interactive_customer_info_needed") {
         throw Error("Non-interactive KYC is not yet supported.")
       } else if (response.data.type === "customer_info_status" && response.data.status === "pending") {
-        dispatch(Action.pendingKYC(response.data as WithdrawalKYCStatusResponse<"pending">))
+        dispatch(Action.pendingKYC(response.data as KYCStatusResponse<"pending">))
       } else if (response.data.type === "customer_info_status" && response.data.status === "denied") {
-        dispatch(Action.failedKYC(response.data as WithdrawalKYCStatusResponse<"denied">))
+        dispatch(Action.failedKYC(response.data as KYCStatusResponse<"denied">))
         stopKYCPolling()
       } else {
         throw Error(`Unexpected response type: ${response.type} / ${response.data.type}`)
@@ -142,7 +143,7 @@ function Offramp(props: Props) {
       const withdrawalRequest: WithdrawalRequestData = {
         account: props.account.publicKey,
         asset,
-        withdrawalFormValues: formValues,
+        formValues,
         method,
         transferServer
       }
@@ -251,7 +252,7 @@ function Offramp(props: Props) {
       <WithdrawalTransactionForm
         account={props.account}
         actionsRef={props.actionsRef}
-        anchorResponse={currentState.withdrawal}
+        anchorResponse={currentState.transfer}
         asset={currentState.details.asset}
         onCancel={startOver}
         onSubmit={sendWithdrawalTx}
@@ -273,7 +274,7 @@ function Offramp(props: Props) {
           assets={props.assets}
           actionsRef={props.actionsRef}
           initialAsset={currentState.details && currentState.details.asset}
-          initialFormValues={currentState.details && currentState.details.withdrawalFormValues}
+          initialFormValues={currentState.details && currentState.details.formValues}
           initialMethod={currentState.details && currentState.details.method}
           onCancel={props.onCancel}
           onSubmit={handleWithdrawalFormSubmission}
@@ -305,4 +306,4 @@ function Offramp(props: Props) {
   }
 }
 
-export default React.memo(Offramp)
+export default React.memo(WithdrawalDialogForm)
