@@ -1,6 +1,15 @@
 import React from "react"
+import Button from "@material-ui/core/Button"
+import Divider from "@material-ui/core/Divider"
+import List from "@material-ui/core/List"
+import ListItem from "@material-ui/core/ListItem"
+import ListItemIcon from "@material-ui/core/ListItemIcon"
+import ListItemText from "@material-ui/core/ListItemText"
+import ListSubheader from "@material-ui/core/ListSubheader"
 import Typography from "@material-ui/core/Typography"
 import DoneAllIcon from "@material-ui/icons/DoneAll"
+import CreditCardIcon from "@material-ui/icons/CreditCard"
+import OpenInNewIcon from "@material-ui/icons/OpenInNew"
 import UpdateIcon from "@material-ui/icons/Update"
 import { Account } from "../../context/accounts"
 import { SettingsContext } from "../../context/settings"
@@ -9,6 +18,8 @@ import { useHorizon } from "../../hooks/stellar"
 import { useLiveRecentTransactions } from "../../hooks/stellar-subscriptions"
 import { hasSigned } from "../../lib/transaction"
 import { MinimumAccountBalance } from "../Fetchers"
+import QRCodeIcon from "../Icon/QRCode"
+import { VerticalLayout } from "../Layout/Box"
 import FriendbotButton from "./FriendbotButton"
 import OfferList from "./OfferList"
 import { InteractiveSignatureRequestList } from "./SignatureRequestList"
@@ -62,6 +73,21 @@ function AccountTransactions(props: { account: Account }) {
   const settings = React.useContext(SettingsContext)
 
   return (
+    <List style={{ margin: "16px auto", maxWidth: 600 }}>
+      <ListSubheader style={{ background: "none" }}>Funding options</ListSubheader>
+      <ListItem button>
+        <ListItemText
+          primary="MoonPay"
+          secondary="Buy Stellar Lumens instantly using your debit/credit card or Apple Pay"
+        />
+        <ListItemIcon style={{ minWidth: 40 }}>
+          <OpenInNewIcon />
+        </ListItemIcon>
+      </ListItem>
+    </List>
+  )
+
+  return (
     <>
       {recentTxs.loading ? (
         <TransactionListPlaceholder />
@@ -79,15 +105,20 @@ function AccountTransactions(props: { account: Account }) {
         </>
       ) : (
         <>
-          <Typography align="center" color="textSecondary" style={{ margin: "30px auto", padding: "0 16px" }}>
+          <Typography align="center" color="textSecondary" style={{ margin: "30px auto 0", padding: "0 16px" }}>
             Account does not yet exist on the network. Send at least <MinimumAccountBalance testnet={account.testnet} />
             &nbsp;XLM to activate the account.
           </Typography>
-          {account.testnet ? (
-            <Typography align="center" style={{ paddingBottom: 30 }}>
-              <FriendbotButton horizon={horizon} publicKey={account.publicKey} />
-            </Typography>
-          ) : null}
+          <Divider style={{ margin: "30px 0" }} />
+          <VerticalLayout alignItems="stretch" margin="0 auto" style={{ paddingBottom: 30, width: "fit-content" }}>
+            {account.testnet ? <FriendbotButton horizon={horizon} publicKey={account.publicKey} /> : null}
+            <Button startIcon={<CreditCardIcon />} style={{ background: "white", marginBottom: 16 }} variant="outlined">
+              Fund your account
+            </Button>
+            <Button startIcon={<QRCodeIcon />} style={{ background: "white", marginBottom: 16 }} variant="outlined">
+              Show public key
+            </Button>
+          </VerticalLayout>
         </>
       )}
     </>

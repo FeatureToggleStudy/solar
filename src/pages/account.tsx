@@ -66,7 +66,6 @@ interface AccountActionsProps {
   onReceivePayment: () => void
 }
 
-// tslint:disable-next-line no-shadowed-variable
 const AccountActions = React.memo(function AccountActions(props: AccountActionsProps) {
   const accountData = useLiveAccountData(props.account.publicKey, props.account.testnet)
   const classes = useButtonStyles()
@@ -94,7 +93,6 @@ const AccountActions = React.memo(function AccountActions(props: AccountActionsP
   )
 })
 
-// tslint:disable-next-line no-shadowed-variable
 const AccountPageContent = React.memo(function AccountPageContent(props: { account: Account }) {
   const isSmallScreen = useIsMobile()
   const router = useRouter()
