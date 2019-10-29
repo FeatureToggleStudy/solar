@@ -4,6 +4,7 @@ import React from "react"
 import ReactDOM from "react-dom"
 import { HashRouter as Router, Route, Switch } from "react-router-dom"
 import SmoothScroll from "smoothscroll-polyfill"
+import CircularProgress from "@material-ui/core/CircularProgress"
 import { MuiThemeProvider } from "@material-ui/core/styles"
 import AndroidBackButton from "./components/AndroidBackButton"
 import ErrorBoundary from "./components/ErrorBoundary"
@@ -17,14 +18,22 @@ import { NotificationsProvider } from "./context/notifications"
 import { SettingsProvider } from "./context/settings"
 import { SignatureDelegationProvider } from "./context/signatureDelegation"
 import { StellarProvider } from "./context/stellar"
-import AllAccountsPage from "./pages/all-accounts"
-import AccountPage from "./pages/account"
-import CreateAccountPage from "./pages/create-account"
-import SettingsPage from "./pages/settings"
 import handleSplashScreen from "./splash-screen"
 import theme from "./theme"
 
 SmoothScroll.polyfill()
+
+const pages = {
+  account: import("./pages/account"),
+  allAccounts: import("./pages/all-accounts"),
+  createAccount: import("./pages/create-account"),
+  settings: import("./pages/settings")
+}
+
+const AllAccountsPage = React.lazy(() => pages.allAccounts)
+const AccountPage = React.lazy(() => pages.account)
+const CreateAccountPage = React.lazy(() => pages.createAccount)
+const SettingsPage = React.lazy(() => pages.settings)
 
 const CreateMainnetAccount = () => <CreateAccountPage testnet={false} />
 const CreateTestnetAccount = () => <CreateAccountPage testnet={true} />
@@ -53,16 +62,18 @@ const App = () => (
       <VerticalLayout height="100%" style={{ WebkitOverflowScrolling: "touch" }}>
         <VerticalLayout height="100%" grow overflowY="hidden">
           <ErrorBoundary>
-            <Switch>
-              <Route exact path="/" component={AllAccountsPage} />
-              <Route exact path="/account/create/mainnet" component={CreateMainnetAccount} />
-              <Route exact path="/account/create/testnet" component={CreateTestnetAccount} />
-              <Route
-                path={["/account/:id/:action/:subaction", "/account/:id/:action", "/account/:id"]}
-                render={props => <AccountPage accountID={props.match.params.id} />}
-              />
-              <Route exact path="/settings" component={SettingsPage} />
-            </Switch>
+            <React.Suspense fallback={<CircularProgress />}>
+              <Switch>
+                <Route exact path="/" component={AllAccountsPage} />
+                <Route exact path="/account/create/mainnet" component={CreateMainnetAccount} />
+                <Route exact path="/account/create/testnet" component={CreateTestnetAccount} />
+                <Route
+                  path={["/account/:id/:action/:subaction", "/account/:id/:action", "/account/:id"]}
+                  render={props => <AccountPage accountID={props.match.params.id} />}
+                />
+                <Route exact path="/settings" component={SettingsPage} />
+              </Switch>
+            </React.Suspense>
           </ErrorBoundary>
         </VerticalLayout>
       </VerticalLayout>
