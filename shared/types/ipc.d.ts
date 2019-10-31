@@ -6,34 +6,38 @@ declare namespace IPC {
    * reference the call itself (each call is assigned a numeric call ID).
    */
 
-  export const enum Messages {
-    CopyToClipboard = "CopyToClipboard",
+  //  export type Messages = import("../ipc").Messages
 
-    ScanQRCode = "ScanQRCode",
+  const Messages = {
+    CopyToClipboard: "CopyToClipboard",
 
-    ShowSplashScreen = "ShowSplashScreen",
-    HideSplashScreen = "HideSplashScreen",
+    ScanQRCode: "ScanQRCode",
 
-    BioAuthAvailable = "BioAuthAvailable",
-    TestBioAuth = "TestBioAuth",
+    ShowSplashScreen: "ShowSplashScreen",
+    HideSplashScreen: "HideSplashScreen",
 
-    OpenLink = "OpenLink",
+    BioAuthAvailable: "BioAuthAvailable",
+    TestBioAuth: "TestBioAuth",
 
-    DeepLinkURL = "DeepLinkURL",
+    OpenLink: "OpenLink",
 
-    ReadSettings = "ReadSettings",
-    StoreSettings = "StoreSettings",
-    ReadIgnoredSignatureRequestHashes = "ReadIgnoredSignatureRequestHashes",
-    StoreIgnoredSignatureRequestHashes = "StoreIgnoredSignatureRequestHashes",
+    DeepLinkURL: "DeepLinkURL",
 
-    GetKeyIDs = "GetKeyIDs",
-    GetPublicKeyData = "GetPublicKeyData",
-    GetPrivateKeyData = "GetPrivateKeyData",
-    SaveKey = "SaveKey",
-    SavePublicKeyData = "SavePublicKeyData",
-    SignTransaction = "SignTransaction",
-    RemoveKey = "RemoveKey"
-  }
+    ReadSettings: "ReadSettings",
+    StoreSettings: "StoreSettings",
+    ReadIgnoredSignatureRequestHashes: "ReadIgnoredSignatureRequestHashes",
+    StoreIgnoredSignatureRequestHashes: "StoreIgnoredSignatureRequestHashes",
+
+    GetKeyIDs: "GetKeyIDs",
+    GetPublicKeyData: "GetPublicKeyData",
+    GetPrivateKeyData: "GetPrivateKeyData",
+    SaveKey: "SaveKey",
+    SavePublicKeyData: "SavePublicKeyData",
+    SignTransaction: "SignTransaction",
+    RemoveKey: "RemoveKey"
+  } as const
+
+  export type MessageType = typeof Messages
 
   export interface MessageSignatures {
     [Messages.CopyToClipboard]: (text: string) => void
