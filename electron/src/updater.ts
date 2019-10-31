@@ -2,7 +2,7 @@ import { app, autoUpdater, dialog, Notification } from "electron"
 import isDev from "electron-is-dev"
 import fetch from "isomorphic-fetch"
 import os from "os"
-import { readInstallationID } from "./storage"
+import { readInstallationID } from "./ipc/storage"
 import { URL } from "url"
 
 const showMessageBox = (options: Electron.MessageBoxOptions) =>
